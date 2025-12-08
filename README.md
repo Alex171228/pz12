@@ -160,4 +160,91 @@ func (h *Handler) GetNote(w http.ResponseWriter, r *http.Request) {
 ```
 
 ---
- 
+### Скриншот Swagger UI
+
+<img width="1857" height="920" alt="image" src="https://github.com/user-attachments/assets/d941710a-bbe8-489a-aa27-77806841f9c6" /> 
+
+### Команды для запуска
+
+### Запуск сервера
+
+```bash
+go run ./cmd/api
+```
+
+Сервер запустится на порту `8080`.
+### Доступные эндпоинты
+
+| Метод | Путь | Описание |
+|-------|------|----------|
+| GET | `/health` | Healthcheck |
+| GET | `/docs/*` | Swagger UI |
+| GET | `/swagger/doc.json` | Swagger JSON спецификация |
+| GET | `/api/v1/notes` | Список заметок |
+| POST | `/api/v1/notes` | Создать заметку |
+| GET | `/api/v1/notes/{id}` | Получить заметку |
+| PATCH | `/api/v1/notes/{id}` | Обновить заметку |
+| DELETE | `/api/v1/notes/{id}` | Удалить заметку |
+
+### Генерация документации
+
+В данном проекте **генерация не требуется** — спецификация встроена в код.
+
+Для справки, при использовании других подходов команды были бы следующими:
+
+**Code-first (swag):**
+```bash
+# Установка
+go install github.com/swaggo/swag/cmd/swag@latest
+
+# Генерация docs/ из аннотаций
+swag init -g cmd/api/main.go -o docs
+```
+
+**Schema-first (oapi-codegen):**
+```bash
+# Установка
+go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+# Генерация Go-кода из OpenAPI спецификации
+oapi-codegen -generate types,server -package api openapi.yaml > internal/api/api.gen.go
+```
+
+---
+## Запуск проекта
+
+### Требования
+
+| Компонент | Версия | Проверка |
+|-----------|--------|----------|
+| Go | 1.22+ | `go version` |
+| Git | любая | `git --version` |
+
+Клонировать репозиторий
+
+```bash
+git clone https://github.com/Alex171228/pz12
+cd pz12
+```
+
+Установка зависимостей
+
+```bash
+go mod download
+```
+
+Эта команда скачает все необходимые пакеты:
+- `github.com/go-chi/chi/v5` — HTTP роутер
+- `github.com/swaggo/http-swagger/v2` — Swagger UI middleware
+
+Для проверки установленных зависимостей:
+
+```bash
+go mod verify
+```
+
+Запуск сервера
+
+```bash
+go run ./cmd/api
+```
