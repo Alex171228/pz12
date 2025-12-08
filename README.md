@@ -246,7 +246,7 @@ swag init -g cmd/api/main.go -o docs
 2025/12/08 22:46:08 create swagger.json at docs/swagger.json
 2025/12/08 22:46:08 create swagger.yaml at docs/swagger.yaml
 ```
-## 6. Выводы
+### Выводы
 
 ### Что удалось
 
