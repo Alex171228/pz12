@@ -152,31 +152,6 @@ go run ./cmd/api
 | PATCH | `/api/v1/notes/{id}` | Обновить заметку |
 | DELETE | `/api/v1/notes/{id}` | Удалить заметку |
 
-### Генерация документации
-
-В данном проекте **генерация не требуется** — спецификация встроена в код.
-
-Для справки, при использовании других подходов команды были бы следующими:
-
-**Code-first (swag):**
-```bash
-# Установка
-go install github.com/swaggo/swag/cmd/swag@latest
-
-# Генерация docs/ из аннотаций
-swag init -g cmd/api/main.go -o docs
-```
-
-**Schema-first (oapi-codegen):**
-```bash
-# Установка
-go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
-
-# Генерация Go-кода из OpenAPI спецификации
-oapi-codegen -generate types,server -package api openapi.yaml > internal/api/api.gen.go
-```
-
----
 ## Запуск проекта
 
 ### Требования
