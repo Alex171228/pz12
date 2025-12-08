@@ -8,32 +8,54 @@
 - Научиться публиковать интерактивную документацию (Swagger UI / ReDoc) на эндпоинте GET /docs.
 - Синхронизировать код и спецификацию (комментарии-аннотации → генерация) и/или «schema-first» (генерация кода из openapi.yaml).
 - одготовить процесс обновления документации (Makefile/скрипт).
-### Подход: Ручная спецификация (Embedded Spec)
+### Подход: Code-First
 
-В данном проекте использован **гибридный подход** — OpenAPI 2.0 (Swagger) спецификация написана **вручную** и встроена непосредственно в исходный код как Go-константа.
+В данном проекте используется **code-first подход** с инструментом **swag** — Swagger-документация автоматически генерируется из специальных аннотаций в Go-коде.
 
 | Подход | Описание | Используется в проекте |
 |--------|----------|------------------------|
-| **Code-first** | Аннотации в коде → `swag init` → генерация `docs/` | нет |
+| **Code-first** | Аннотации в коде → `swag init` → генерация `docs/` | да |
 | **Schema-first** | OpenAPI YAML/JSON → `oapi-codegen` → генерация кода | нет |
-| **Embedded Spec** | Ручное написание спецификации в коде | да |
+| **Embedded Spec** | Ручное написание спецификации в коде | нет |
 
-**Преимущества выбранного подхода:**
-- Полный контроль над спецификацией
-- Нет зависимости от генераторов
-- Спецификация всегда синхронизирована с приложением
+**Преимущества code-first подхода:**
+- Документация всегда соответствует коду (Single Source of Truth)
+- Аннотации находятся рядом с кодом — легко поддерживать
+- Автоматическая генерация типов и примеров из Go-структур
+- Поддержка валидации и примеров через теги
 
-**Недостатки:**
-- Требуется ручное обновление при изменении API
-- Нет автоматической валидации соответствия кода и спецификации
+**Инструменты:**
+- [swaggo/swag](https://github.com/swaggo/swag) — генератор документации
+- [swaggo/http-swagger](https://github.com/swaggo/http-swagger) — middleware для Swagger UI
 
 ---
 ### Фрагменты кода методов API
 
+### Общая информация об API (`cmd/api/main.go`)
+
+```go
+// @title Notes API
+// @version 1.0
+// @description Учебный REST API для заметок (CRUD) для практического занятия №12.
+// @description Демонстрация code-first подхода с генерацией Swagger документации через swag.
+
+// @host localhost:8080
+// @BasePath /api/v1
+
+// @schemes http
+```
+
 ### Метод `ListNotes` — получение списка заметок
 
 ```go
-// GET /api/v1/notes
+// ListNotes возвращает список всех заметок.
+// @Summary Список заметок
+// @Description Возвращает массив всех заметок
+// @Tags notes
+// @Produce json
+// @Success 200 {array} core.Note "Список заметок"
+// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера"
+// @Router /notes [get]
 func (h *Handler) ListNotes(w http.ResponseWriter, r *http.Request) {
     notes, err := h.Service.ListNotes()
     if err != nil {
@@ -45,117 +67,61 @@ func (h *Handler) ListNotes(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-**Соответствующий фрагмент Swagger-спецификации:**
-
-```json
-"/notes": {
-  "get": {
-    "summary": "Список заметок",
-    "tags": ["notes"],
-    "produces": ["application/json"],
-    "responses": {
-      "200": {
-        "description": "OK",
-        "schema": {
-          "type": "array",
-          "items": { "$ref": "#/definitions/Note" }
-        }
-      },
-      "500": {
-        "description": "Internal error",
-        "schema": { "$ref": "#/definitions/ErrorResponse" }
-      }
-    }
-  }
-}
-```
-
----
-
 ### Метод `CreateNote` — создание заметки
 
 ```go
-// POST /api/v1/notes
+// CreateNote создаёт новую заметку.
+// @Summary Создать заметку
+// @Description Создаёт новую заметку с указанным заголовком и содержимым
+// @Tags notes
+// @Accept json
+// @Produce json
+// @Param input body CreateNoteRequest true "Данные заметки"
+// @Success 201 {object} core.Note "Созданная заметка"
+// @Failure 400 {object} ErrorResponse "Ошибка валидации"
+// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера"
+// @Router /notes [post]
 func (h *Handler) CreateNote(w http.ResponseWriter, r *http.Request) {
-    var input struct {
-        Title   string `json:"title"`
-        Content string `json:"content"`
-    }
-
-    if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-        writeError(w, http.StatusBadRequest, "invalid JSON")
-        return
-    }
-
-    note, err := h.Service.CreateNote(input.Title, input.Content)
-    if err != nil {
-        if errors.Is(err, service.ErrValidation) {
-            writeError(w, http.StatusBadRequest, "title is required")
-            return
-        }
-        writeError(w, http.StatusInternalServerError, "internal error")
-        return
-    }
-
-    w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(http.StatusCreated) // 201
-    _ = json.NewEncoder(w).Encode(note)
+    var input CreateNoteRequest
+    // ... реализация
 }
 ```
-
-**Соответствующий фрагмент Swagger-спецификации:**
-
-```json
-"post": {
-  "summary": "Создать заметку",
-  "tags": ["notes"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
-  "parameters": [{
-    "in": "body",
-    "name": "input",
-    "required": true,
-    "schema": { "$ref": "#/definitions/NoteCreate" }
-  }],
-  "responses": {
-    "201": {
-      "description": "Created",
-      "schema": { "$ref": "#/definitions/Note" }
-    },
-    "400": {
-      "description": "Validation error",
-      "schema": { "$ref": "#/definitions/ErrorResponse" }
-    }
-  }
-}
-```
-
----
 
 ### Метод `GetNote` — получение заметки по ID
 
 ```go
-// GET /api/v1/notes/{id}
+// GetNote возвращает заметку по ID.
+// @Summary Получить заметку
+// @Description Возвращает заметку по её идентификатору
+// @Tags notes
+// @Produce json
+// @Param id path int true "ID заметки"
+// @Success 200 {object} core.Note "Найденная заметка"
+// @Failure 400 {object} ErrorResponse "Некорректный ID"
+// @Failure 404 {object} ErrorResponse "Заметка не найдена"
+// @Failure 500 {object} ErrorResponse "Внутренняя ошибка сервера"
+// @Router /notes/{id} [get]
 func (h *Handler) GetNote(w http.ResponseWriter, r *http.Request) {
-    idStr := chi.URLParam(r, "id")
-    id, err := strconv.ParseInt(idStr, 10, 64)
-    if err != nil {
-        writeError(w, http.StatusBadRequest, "invalid id")
-        return
-    }
+    // ... реализация
+}
+```
 
-    note, err := h.Service.GetNote(id)
-    if err != nil {
-        if errors.Is(err, repo.ErrNoteNotFound) {
-            writeError(w, http.StatusNotFound, "note not found")
-            return
-        }
-        writeError(w, http.StatusInternalServerError, "internal error")
-        return
-    }
+### Модели данных с аннотациями
 
-    w.Header().Set("Content-Type", "application/json")
-    _ = json.NewEncoder(w).Encode(note)
+```go
+// Note — доменная модель заметки.
+// @Description Заметка с заголовком и содержимым
+type Note struct {
+    // Уникальный идентификатор заметки
+    ID int64 `json:"id" example:"1"`
+    // Заголовок заметки
+    Title string `json:"title" example:"Моя заметка"`
+    // Содержимое заметки
+    Content string `json:"content" example:"Текст заметки..."`
+    // Дата и время создания
+    CreatedAt time.Time `json:"createdAt" example:"2024-12-08T12:00:00Z"`
+    // Дата и время последнего обновления
+    UpdatedAt *time.Time `json:"updatedAt,omitempty" example:"2024-12-08T13:00:00Z"`
 }
 ```
 
@@ -252,24 +218,63 @@ go run ./cmd/api
 
 <img width="303" height="515" alt="image" src="https://github.com/user-attachments/assets/630f3775-f5b7-47b8-af8e-0222d558441f" /> 
 
+### Установка swag CLI
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
 ### Генерация документации
 
-**Code-first (swag):**
 ```bash
-# Установка
-go install github.com/swaggo/swag/cmd/swag@latest
-
-# Генерация docs/ из аннотаций
 swag init -g cmd/api/main.go -o docs
 ```
 
-**Schema-first (oapi-codegen):**
-```bash
-# Установка
-go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+**Параметры:**
+- `-g cmd/api/main.go` — файл с главными аннотациями (@title, @version и т.д.)
+- `-o docs` — папка для вывода сгенерированных файлов
+**Результат выполнения:**
 
-# Генерация Go-кода из OpenAPI спецификации
-oapi-codegen -generate types,server -package api openapi.yaml > internal/api/api.gen.go
 ```
+2025/12/08 22:46:07 Generate swagger docs....
+2025/12/08 22:46:07 Generate general API Info, search dir:./
+2025/12/08 22:46:08 Generating handlers.CreateNoteRequest
+2025/12/08 22:46:08 Generating core.Note
+2025/12/08 22:46:08 Generating handlers.ErrorResponse
+2025/12/08 22:46:08 Generating handlers.UpdateNoteRequest
+2025/12/08 22:46:08 create docs.go at docs/docs.go
+2025/12/08 22:46:08 create swagger.json at docs/swagger.json
+2025/12/08 22:46:08 create swagger.yaml at docs/swagger.yaml
+```
+## 6. Выводы
 
----
+### Что удалось
+
+1. **Реализован полноценный REST API** с CRUD-операциями для заметок
+2. **Использован code-first подход** — документация генерируется из аннотаций в коде
+3. **Автоматическая генерация** OpenAPI спецификации через `swag init`
+4. **Интерактивный Swagger UI** по адресу `/docs/`
+5. **Чистая архитектура** с разделением на слои (core, http, repo)
+
+### Что автоматизировано
+
+| Компонент | Способ автоматизации |
+|-----------|----------------------|
+| Swagger спецификация | `swag init` генерирует `docs/swagger.json` |
+| Модели данных в docs | Автоматически из Go-структур с тегами |
+| Примеры значений | Теги `example:"..."` в структурах |
+| Swagger UI | Middleware `http-swagger` |
+
+### Основные Swagger-аннотации
+
+| Аннотация | Назначение | Пример |
+|-----------|------------|--------|
+| `@Summary` | Краткое описание метода | `@Summary Список заметок` |
+| `@Description` | Подробное описание | `@Description Возвращает массив всех заметок` |
+| `@Tags` | Группировка методов | `@Tags notes` |
+| `@Accept` | Входной формат | `@Accept json` |
+| `@Produce` | Выходной формат | `@Produce json` |
+| `@Param` | Параметр запроса | `@Param id path int true "ID заметки"` |
+| `@Success` | Успешный ответ | `@Success 200 {object} Note` |
+| `@Failure` | Ответ с ошибкой | `@Failure 404 {object} ErrorResponse` |
+| `@Router` | Путь и метод | `@Router /notes/{id} [get]` |
