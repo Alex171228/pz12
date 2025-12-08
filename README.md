@@ -248,3 +248,28 @@ go mod verify
 ```bash
 go run ./cmd/api
 ```
+### Структура проекта
+
+<img width="303" height="515" alt="image" src="https://github.com/user-attachments/assets/630f3775-f5b7-47b8-af8e-0222d558441f" /> 
+
+### Генерация документации
+
+**Code-first (swag):**
+```bash
+# Установка
+go install github.com/swaggo/swag/cmd/swag@latest
+
+# Генерация docs/ из аннотаций
+swag init -g cmd/api/main.go -o docs
+```
+
+**Schema-first (oapi-codegen):**
+```bash
+# Установка
+go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+# Генерация Go-кода из OpenAPI спецификации
+oapi-codegen -generate types,server -package api openapi.yaml > internal/api/api.gen.go
+```
+
+---
