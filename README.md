@@ -254,7 +254,7 @@ type Note struct {
 После запуска сервера Swagger UI доступен по адресу:
 
 ```
-http://localhost:8080/docs/
+http://109.237.98.39:8080/docs/
 ```
 
 <img width="1816" height="1284" alt="image" src="https://github.com/user-attachments/assets/007cada6-5274-4623-b6e7-926d6629b7db" /> 
@@ -373,7 +373,7 @@ go run ./cmd/api
 Откройте в браузере:
 
 ```
-http://localhost:8080/docs/
+http://109.237.98.39:8080/docs/
 ```
 
 ---
