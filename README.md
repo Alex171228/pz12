@@ -290,15 +290,15 @@ swag init -g cmd/api/main.go -o docs
 **Результат выполнения:**
 
 ```
-2024/12/08 22:46:07 Generate swagger docs....
-2024/12/08 22:46:07 Generate general API Info, search dir:./
-2024/12/08 22:46:08 Generating handlers.CreateNoteRequest
-2024/12/08 22:46:08 Generating core.Note
-2024/12/08 22:46:08 Generating handlers.ErrorResponse
-2024/12/08 22:46:08 Generating handlers.UpdateNoteRequest
-2024/12/08 22:46:08 create docs.go at docs/docs.go
-2024/12/08 22:46:08 create swagger.json at docs/swagger.json
-2024/12/08 22:46:08 create swagger.yaml at docs/swagger.yaml
+2025/12/08 22:46:07 Generate swagger docs....
+2025/12/08 22:46:07 Generate general API Info, search dir:./
+2025/12/08 22:46:08 Generating handlers.CreateNoteRequest
+2025/12/08 22:46:08 Generating core.Note
+2025/12/08 22:46:08 Generating handlers.ErrorResponse
+2025/12/08 22:46:08 Generating handlers.UpdateNoteRequest
+2025/12/08 22:46:08 create docs.go at docs/docs.go
+2025/12/08 22:46:08 create swagger.json at docs/swagger.json
+2025/12/08 22:46:08 create swagger.yaml at docs/swagger.yaml
 ```
 
 ### Альтернатива (без установки в PATH)
