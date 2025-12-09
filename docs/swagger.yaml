@@ -1,0 +1,214 @@
+basePath: /api/v1
+definitions:
+  core.Note:
+    description: Заметка с заголовком и содержимым
+    properties:
+      content:
+        description: Содержимое заметки
+        example: Текст заметки...
+        type: string
+      createdAt:
+        description: Дата и время создания
+        example: "2024-12-08T12:00:00Z"
+        type: string
+      id:
+        description: Уникальный идентификатор заметки
+        example: 1
+        type: integer
+      title:
+        description: Заголовок заметки
+        example: Моя заметка
+        type: string
+      updatedAt:
+        description: Дата и время последнего обновления
+        example: "2024-12-08T13:00:00Z"
+        type: string
+    type: object
+  handlers.CreateNoteRequest:
+    description: Данные для создания новой заметки
+    properties:
+      content:
+        description: Содержимое заметки
+        example: Текст заметки...
+        type: string
+      title:
+        description: Заголовок заметки (обязательное поле)
+        example: Моя первая заметка
+        type: string
+    type: object
+  handlers.ErrorResponse:
+    description: Ответ сервера при возникновении ошибки
+    properties:
+      error:
+        description: Описание ошибки
+        example: something went wrong
+        type: string
+    type: object
+  handlers.UpdateNoteRequest:
+    description: Данные для частичного обновления заметки
+    properties:
+      content:
+        description: Новое содержимое (опционально)
+        example: Обновлённый текст
+        type: string
+      title:
+        description: Новый заголовок (опционально)
+        example: Обновлённый заголовок
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: |-
+    Учебный REST API для заметок (CRUD) для практического занятия №12.
+    Демонстрация code-first подхода с генерацией Swagger документации через swag.
+  title: Notes API
+  version: "1.0"
+paths:
+  /notes:
+    get:
+      description: Возвращает массив всех заметок
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список заметок
+          schema:
+            items:
+              $ref: '#/definitions/core.Note'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Список заметок
+      tags:
+      - notes
+    post:
+      consumes:
+      - application/json
+      description: Создаёт новую заметку с указанным заголовком и содержимым
+      parameters:
+      - description: Данные заметки
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateNoteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданная заметка
+          schema:
+            $ref: '#/definitions/core.Note'
+        "400":
+          description: Ошибка валидации
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Создать заметку
+      tags:
+      - notes
+  /notes/{id}:
+    delete:
+      description: Удаляет заметку по ID. При успехе возвращает 204 No Content.
+      parameters:
+      - description: ID заметки
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: Заметка удалена
+        "400":
+          description: Некорректный ID
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Заметка не найдена
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Удалить заметку
+      tags:
+      - notes
+    get:
+      description: Возвращает заметку по её идентификатору
+      parameters:
+      - description: ID заметки
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Найденная заметка
+          schema:
+            $ref: '#/definitions/core.Note'
+        "400":
+          description: Некорректный ID
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Заметка не найдена
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Получить заметку
+      tags:
+      - notes
+    patch:
+      consumes:
+      - application/json
+      description: Частично обновляет заметку (PATCH). Можно обновить только title,
+        только content или оба поля.
+      parameters:
+      - description: ID заметки
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateNoteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновлённая заметка
+          schema:
+            $ref: '#/definitions/core.Note'
+        "400":
+          description: Некорректные данные
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "404":
+          description: Заметка не найдена
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ErrorResponse'
+      summary: Обновить заметку
+      tags:
+      - notes
+schemes:
+- http
+swagger: "2.0"
