@@ -309,30 +309,8 @@ go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/api/main.go -o docs
 
 ## 5. Структура проекта
 
-```
-notes-api-pz12/
-├── cmd/
-│   └── api/
-│       └── main.go              # Точка входа + главные Swagger-аннотации
-├── docs/                        # ← Сгенерированная документация
-│   ├── docs.go                  # Go-пакет для импорта в приложение
-│   ├── swagger.json             # OpenAPI 2.0 спецификация (JSON)
-│   └── swagger.yaml             # OpenAPI 2.0 спецификация (YAML)
-├── internal/
-│   ├── core/
-│   │   ├── note.go              # Доменная модель Note + аннотации
-│   │   └── service/
-│   │       └── note_service.go  # Бизнес-логика
-│   ├── http/
-│   │   ├── handlers/
-│   │   │   └── notes.go         # HTTP-обработчики + Swagger-аннотации
-│   │   └── router.go            # Маршрутизация + Swagger UI middleware
-│   └── repo/
-│       └── note_mem.go          # In-memory репозиторий
-├── go.mod
-├── go.sum
-└── README.md
-```
+<img width="303" height="607" alt="image" src="https://github.com/user-attachments/assets/306e5eed-1c64-4b39-b5c2-a21391e72c5a" /> 
+
 
 ### Ключевые файлы
 
