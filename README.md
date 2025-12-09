@@ -34,7 +34,7 @@
 
 ### Главные аннотации API
 
-> **Файл:** `cmd/api/main.go` (строки 16-24)
+> **Файл:** `cmd/api/main.go`
 
 ```go
 // @title Notes API
@@ -64,7 +64,7 @@
 
 > **Файл:** `internal/http/handlers/notes.go`
 
-### Метод `ListNotes` — получение списка заметок (строки 92-114)
+### Метод `ListNotes` — получение списка заметок
 
 ```go
 // ListNotes возвращает список всех заметок.
@@ -105,7 +105,7 @@ func (h *Handler) ListNotes(w http.ResponseWriter, r *http.Request) {
 
 ---
 
-### Метод `CreateNote` — создание заметки (строки 58-90)
+### Метод `CreateNote` — создание заметки
 
 ```go
 // CreateNote создаёт новую заметку.
@@ -153,7 +153,7 @@ func (h *Handler) CreateNote(w http.ResponseWriter, r *http.Request) {
 
 ---
 
-### Метод `GetNote` — получение заметки по ID (строки 116-147)
+### Метод `GetNote` — получение заметки по ID 
 
 ```go
 // GetNote возвращает заметку по ID.
@@ -201,7 +201,7 @@ func (h *Handler) GetNote(w http.ResponseWriter, r *http.Request) {
 
 ### Модели данных с аннотациями
 
-> **Файл:** `internal/http/handlers/notes.go` (строки 26-49)
+> **Файл:** `internal/http/handlers/notes.go`
 
 ```go
 // CreateNoteRequest модель запроса на создание заметки.
