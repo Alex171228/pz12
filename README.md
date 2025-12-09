@@ -413,23 +413,6 @@ curl -X PATCH http://localhost:8080/api/v1/notes/1 \
 # Удалить заметку
 curl -X DELETE http://localhost:8080/api/v1/notes/1
 ```
-
-### Использование PowerShell (Windows)
-
-```powershell
-# Создать заметку
-$body = @{ title = "Первая заметка"; content = "Текст заметки" } | ConvertTo-Json
-Invoke-RestMethod -Uri "http://localhost:8080/api/v1/notes" -Method POST -ContentType "application/json" -Body $body
-
-# Получить все заметки
-Invoke-RestMethod -Uri "http://localhost:8080/api/v1/notes"
-
-# Получить заметку по ID
-Invoke-RestMethod -Uri "http://localhost:8080/api/v1/notes/1"
-```
-
----
-
 ## 6. Выводы
 
 ### Что удалось
