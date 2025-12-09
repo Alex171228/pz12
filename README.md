@@ -309,8 +309,7 @@ go run github.com/swaggo/swag/cmd/swag@latest init -g cmd/api/main.go -o docs
 
 ## 5. Структура проекта
 
-<img width="303" height="607" alt="image" src="https://github.com/user-attachments/assets/306e5eed-1c64-4b39-b5c2-a21391e72c5a" /> 
-
+<img width="311" height="595" alt="image" src="https://github.com/user-attachments/assets/2c85bfdd-a52b-4917-ae1b-167cd88227b8" /> 
 
 ### Ключевые файлы
 
