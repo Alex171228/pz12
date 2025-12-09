@@ -395,23 +395,23 @@ http://localhost:8080/docs/
 
 ```bash
 # Создать заметку
-curl -X POST http://localhost:8080/api/v1/notes \
+curl -X POST http://109.237.98.39:8080/api/v1/notes \
   -H "Content-Type: application/json" \
   -d '{"title": "Первая заметка", "content": "Текст заметки"}'
 
 # Получить все заметки
-curl http://localhost:8080/api/v1/notes
+curl http://109.237.98.39:8080/api/v1/notes
 
 # Получить заметку по ID
-curl http://localhost:8080/api/v1/notes/1
+curl http://109.237.98.39:8080/api/v1/notes/1
 
 # Обновить заметку
-curl -X PATCH http://localhost:8080/api/v1/notes/1 \
+curl -X PATCH http://109.237.98.39:8080/api/v1/notes/1 \
   -H "Content-Type: application/json" \
   -d '{"title": "Обновлённый заголовок"}'
 
 # Удалить заметку
-curl -X DELETE http://localhost:8080/api/v1/notes/1
+curl -X DELETE http://109.237.98.39:8080/api/v1/notes/1
 ```
 ## 6. Выводы
 
